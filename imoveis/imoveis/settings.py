@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +30,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  # Tempo de vida do token de acesso
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Tempo de vida do token de refresh
+    "ROTATE_REFRESH_TOKENS": True,  # Gera um novo refresh token a cada atualização
+    "BLACKLIST_AFTER_ROTATION": True,  # Invalida refresh tokens antigos
+    "ALGORITHM": "HS256",  # Algoritmo de criptografia
+    "SIGNING_KEY": SECRET_KEY,  # Chave usada para assinar os tokens
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Tipo de autenticação no cabeçalho
+}
+
 
 # Application definition
 
@@ -37,6 +50,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'core',
+    'rest_framework.authtoken',
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
@@ -50,6 +67,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'imoveis.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
+
 
 TEMPLATES = [
     {
@@ -121,3 +148,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'core.Usuario'
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
